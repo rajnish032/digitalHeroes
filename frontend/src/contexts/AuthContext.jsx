@@ -16,38 +16,35 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimeout(() => {
-      const token = Cookies.get("magicalKey");
-      if (token) {
-        axios
-          .post(
-            `${backendURl}/api/auth/verify-session`,
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-              withCredentials: true,
-            },
-          )
-          .then((res) => {
-            setUser(res.data.user);
-            // toast.success(`Welcome back ${res.data.user.name}`);
-          })
-          .catch((err) => {
-            setUser(null);
-            Cookies.remove("magicalKey");
-            toast.error(
-              err.response?.data.error ||
-                err.response?.data.message ||
-                "Session expired, please log in again. ❌",
-            );
-            navigate("/auth/login");
-          })
-          .finally(() => setLoading(false));
-      } else {
+    const token = Cookies.get("magicalKey");
+
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    axios
+      .post(
+        `${backendURl}/api/auth/verify-session`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        },
+      )
+      .then((res) => {
+        setUser(res.data.user);
+      })
+      .catch(() => {
+        setUser(null);
+        Cookies.remove("magicalKey");
+      })
+      .finally(() => {
         setLoading(false);
-      }
-    }, 500);
-  }, [navigate]);
+      });
+  }, []);
 
   // Signup Function
   const signup = async (name, email, password) => {
@@ -91,21 +88,6 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
-  // Resend OTP Function
-  // const resendOtp = async () => {
-  //   try {
-  //     const res = await axios.post(
-  //       `${backendURl}/api/auth/resend-otp`,
-  //       { email },
-  //       { withCredentials: true }
-  //     );
-  //     toast.success(res.data.message || "OTP resent successfully!");
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.message || "Failed to resend OTP ❌");
-  //     throw error;
-  //   }
-  // };
-
   const login = async (email, password) => {
     try {
       setLoading(true);
@@ -129,13 +111,13 @@ export const AuthProvider = ({ children }) => {
         // console.log(res.data.token);
 
         toast.success("Login successful!");
-setLoading(false);
+        setLoading(false);
 
-if (res.data.user.role === "admin") {
-  navigate("/admin/dashboard");
-} else {
-  navigate("/dashboard");
-}
+        if (res.data.user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         setLoading(false);
         toast.error(res.data.error || "Unknown error");

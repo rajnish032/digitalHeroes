@@ -8,7 +8,7 @@ import {
   BarChart3,
   LogOut,
 } from "lucide-react";
-import Cookies from "js-cookie";
+import { useAuth } from "../../contexts/AuthContext";
 
 const menus = [
   { name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
@@ -19,12 +19,8 @@ const menus = [
 ];
 
 const Sidebar = () => {
-  const navigate = useNavigate();
 
-  const logout = () => {
-    Cookies.remove("magicalKey");
-    navigate("/auth/login");
-  };
+  const { logout } = useAuth();
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-100 flex flex-col z-40">
