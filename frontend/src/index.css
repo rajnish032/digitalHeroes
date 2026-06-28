@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+
+
+@layer utilities {
+  .fade-up {
+    @apply opacity-0 translate-y-6 transition-all duration-500 ease-out;
+  }
+  .fade-up.visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  @keyframes pulse2 {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+}
