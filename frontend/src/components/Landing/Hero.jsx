@@ -1,5 +1,5 @@
 import React from "react";
-import JackpotTicker from "./JackpotTicker";
+import JackpotTicker from "./JackpotTicker.jsx";
 
 const TRUST = [
   "✓ PCI-Compliant Payments",

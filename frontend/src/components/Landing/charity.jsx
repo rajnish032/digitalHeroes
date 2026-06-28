@@ -1,5 +1,5 @@
 import React from "react";
-import { useFadeUp } from "../../hooks/useFadeUp";
+import { useFadeUp } from "../../hooks/useFadeUp.js";
 
 const STATS = [
   { num: "₹48,200", desc: "Donated to charities this year", pct: 78 },
