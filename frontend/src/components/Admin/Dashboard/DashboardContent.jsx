@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
+
 import StatsCards from "./StatsCards";
 import RecentUsers from "./RecentUsers";
 import RecentDraws from "./RecentDraws";
@@ -9,37 +11,32 @@ const backendURL = import.meta.env.VITE_BACKEND_URL;
 
 const DashboardContent = () => {
   const [dashboard, setDashboard] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   const getDashboard = async () => {
     try {
-      const { data } = await axios.get(`${backendURL}/api/admin/dashboard`, {
-        withCredentials: true,
-      });
-      if (data.success) setDashboard(data);
+      const token = Cookies.get("magicalKey");
+
+      const { data } = await axios.get(
+        `${backendURL}/api/admin/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        setDashboard(data);
+      }
     } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+      console.log(error.response?.data || error);
     }
   };
 
   useEffect(() => {
     getDashboard();
   }, []);
-
-  if (loading) {
-    return (
-      <div className="h-64 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-7 h-7 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
-          <p className="text-sm text-gray-400 font-medium">
-            Loading dashboard…
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">

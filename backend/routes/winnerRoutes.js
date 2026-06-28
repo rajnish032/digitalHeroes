@@ -12,21 +12,21 @@ const {
   getAllWinners,
   updateWinnerStatus,
 } = require("../controllers/winnerController");
-const subscriptionCheck = require("../middleware/subscriptionCheck");
+const checkSubscription = require("../middleware/checkSubscription");
 
 // ================= User Routes =================
 
 router.get(
   "/my",
   authenticate,
-  subscriptionCheck,
+  checkSubscription,
   wrapAsync(getMyWinnings)
 );
 
 router.put(
   "/:id/upload-proof",
   authenticate,
-  subscriptionCheck,
+  checkSubscription,
   wrapAsync(uploadProof)
 );
 

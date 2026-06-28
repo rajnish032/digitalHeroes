@@ -3,7 +3,6 @@ const router = express.Router();
 
 const wrapAsync = require("../utils/wrapAsync");
 const authenticate = require("../middleware/authenticate");
-const subscriptionCheck = require("../middleware/subscriptionCheck");
 
 const {
   addScore,
@@ -11,17 +10,18 @@ const {
   updateScore,
   deleteScore,
 } = require("../controllers/scoreController");
+const checkSubscription = require("../middleware/checkSubscription");
 
 // Add Score
-router.post("/", authenticate, subscriptionCheck, wrapAsync(addScore));
+router.post("/", authenticate,checkSubscription, wrapAsync(addScore));
 
 // Get Scores
-router.get("/", authenticate,subscriptionCheck, wrapAsync(getScores));
+router.get("/", authenticate,checkSubscription, wrapAsync(getScores));
 
 // Update Score
-router.put("/:id", authenticate, subscriptionCheck, wrapAsync(updateScore));
+router.put("/:id", authenticate, checkSubscription, wrapAsync(updateScore));
 
 // Delete Score
-router.delete("/:id", authenticate, subscriptionCheck, wrapAsync(deleteScore));
+router.delete("/:id", authenticate, checkSubscription, wrapAsync(deleteScore));
 
 module.exports = router;

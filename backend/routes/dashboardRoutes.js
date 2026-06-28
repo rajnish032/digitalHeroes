@@ -8,8 +8,8 @@ const wrapAsync = require("../utils/wrapAsync");
 const {
   getDashboard,
 } = require("../controllers/dashboardController");
-const subscriptionCheck = require("../middleware/subscriptionCheck");
+const checkSubscription = require("../middleware/checkSubscription");
 
-router.get("/", authenticate,subscriptionCheck, wrapAsync(getDashboard));
+router.get("/", authenticate,checkSubscription, wrapAsync(getDashboard));
 
 module.exports = router;

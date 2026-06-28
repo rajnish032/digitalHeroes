@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -27,26 +28,42 @@ const DrawForm = ({ open, onClose, refreshDraws }) => {
     setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        `${backendURL}/api/draw/admin/run`,
-        formData,
-        { withCredentials: true },
-      );
-      if (data.success) {
-        toast.success(data.message);
-        refreshDraws();
-        onClose();
-        setFormData({ prizePool: "", drawDate: "" });
+  e.preventDefault();
+
+  try {
+    setLoading(true);
+
+    const token = Cookies.get("magicalKey");
+
+    const { data } = await axios.post(
+      `${backendURL}/api/draw/admin/run`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to run draw.");
-    } finally {
-      setLoading(false);
+    );
+
+    if (data.success) {
+      toast.success(data.message);
+      refreshDraws();
+      onClose();
+      setFormData({
+        prizePool: "",
+        drawDate: "",
+      });
     }
-  };
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message ||
+        "Failed to run draw."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div

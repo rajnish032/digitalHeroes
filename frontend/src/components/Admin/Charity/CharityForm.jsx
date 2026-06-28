@@ -11,6 +11,7 @@ import {
   LucideBuilding,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -98,11 +99,16 @@ const CharityForm = ({ open, onClose, editData, refreshCharities }) => {
     try {
       setLoading(true);
 
+      const token = Cookies.get("magicalKey");
+
       const url = isEdit
         ? `${backendURL}/api/charity/${editData._id}`
         : `${backendURL}/api/charity`;
 
       const res = await axios[isEdit ? "put" : "post"](url, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
 

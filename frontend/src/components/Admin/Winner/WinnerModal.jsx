@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { X, RefreshCw } from "lucide-react";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -35,31 +36,38 @@ const WinnerModal = ({ open, onClose, winner, refreshWinners }) => {
 
   if (!open || !winner) return null;
 
-  const updateStatus = async (paymentStatus) => {
-    try {
-      setLoading(true);
+ const updateStatus = async (paymentStatus) => {
+  try {
+    setLoading(true);
 
-      const { data } = await axios.put(
-        `${backendURL}/api/winner/admin/${winner._id}/status`,
-        {
-          paymentStatus,
-        },
-        {
-          withCredentials: true,
-        },
-      );
+    const token = Cookies.get("magicalKey");
 
-      if (data.success) {
-        toast.success(data.message);
-        refreshWinners();
-        onClose();
+    const { data } = await axios.put(
+      `${backendURL}/api/winner/admin/${winner._id}/status`,
+      {
+        paymentStatus,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update winner.");
-    } finally {
-      setLoading(false);
+    );
+
+    if (data.success) {
+      toast.success(data.message);
+      refreshWinners();
+      onClose();
     }
-  };
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message || "Failed to update winner."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div

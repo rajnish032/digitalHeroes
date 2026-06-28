@@ -14,7 +14,7 @@ const {
   getAllAdminDraws,
   getAdminLatestDraw,
 } = require("../controllers/drawController");
-const subscriptionCheck = require("../middleware/subscriptionCheck");
+const checkSubscription = require("../middleware/checkSubscription");
 
 // Admin Only
 router.post("/admin/run", authenticate, isAdmin, wrapAsync(runDraw));
@@ -24,7 +24,7 @@ router.get("/admin", authenticate, wrapAsync(getAllAdminDraws));
 router.get("/admin/latest", authenticate, wrapAsync(getAdminLatestDraw));
 
 // Logged In Users
-router.get("/", authenticate,subscriptionCheck, wrapAsync(getAllDraws));
-router.get("/latest", authenticate,subscriptionCheck, wrapAsync(getLatestDraw));
+router.get("/", authenticate,checkSubscription, wrapAsync(getAllDraws));
+router.get("/latest", authenticate,checkSubscription, wrapAsync(getLatestDraw));
 
 module.exports = router;

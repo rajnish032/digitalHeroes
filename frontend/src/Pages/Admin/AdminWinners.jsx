@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Trophy } from "lucide-react";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 import WinnerTable from "../../components/Admin/Winner/WinnerTable";
 import WinnerModal from "../../components/Admin/Winner/WinnerModal";
@@ -18,12 +19,15 @@ const AdminWinners = () => {
   const getWinners = async () => {
   try {
     setLoading(true);
-
+    const token = Cookies.get("magicalKey");
     const { data } = await axios.get(
       `${backendURL}/api/winner/admin`,
       {
-        withCredentials: true,
-      }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
     );
 
     if (data.success) {

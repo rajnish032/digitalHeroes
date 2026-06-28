@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -59,26 +60,38 @@ const UserModal = ({ open, onClose, user, refreshUsers }) => {
     setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const id = user?.user?._id || user?._id;
-      const { data } = await axios.put(
-        `${backendURL}/api/admin/users/${id}`,
-        formData,
-        { withCredentials: true },
-      );
-      if (data.success) {
-        toast.success("User updated");
-        refreshUsers();
-        onClose();
+  e.preventDefault();
+
+  try {
+    setLoading(true);
+
+    const token = Cookies.get("magicalKey");
+    const id = user?.user?._id || user?._id;
+
+    const { data } = await axios.put(
+      `${backendURL}/api/admin/users/${id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
       }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Update failed.");
-    } finally {
-      setLoading(false);
+    );
+
+    if (data.success) {
+      toast.success("User updated");
+      refreshUsers();
+      onClose();
     }
-  };
+  } catch (err) {
+    toast.error(
+      err.response?.data?.message || "Update failed."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const sub = currentUser?.subscription;
 
